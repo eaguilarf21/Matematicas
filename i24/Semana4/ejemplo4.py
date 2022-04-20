@@ -1,0 +1,12 @@
+print("REGISTRO DE CLIENTES")
+print("--------------------")
+print("Ingrese su nombre:")
+nombre = input()
+print("Ingrese su apellido:")
+apellido = input()
+print("Ingrese su edad:")
+edad = input()
+
+print(type(nombre))
+print(type(apellido))
+print(type(edad))
