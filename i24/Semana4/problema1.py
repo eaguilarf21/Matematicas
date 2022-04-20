@@ -4,10 +4,10 @@
 
 #entrada
 print("Ingresa la altura:")
-altura = int(input())
+altura = float(input())
 
 print("Ingresa la base:")
-base =int(input())
+base = float(input())
 
 #proceso
 area = base*altura/2
