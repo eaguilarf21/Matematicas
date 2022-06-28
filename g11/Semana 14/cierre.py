@@ -2,8 +2,9 @@ import pygame
 import sys
 
 pygame.init()
-
+#ancho y alto de la pantalla
 w,h = 700,500
+
 #pantalla
 pantalla = pygame.display.set_mode((w,h))
 pygame.display.set_caption("mi videojuego en 2D")
@@ -49,7 +50,11 @@ while 1==1:
             nave_rect.right=w
         if nave_rect.left<0:
             nave_rect.left=0
-            
+        if nave_rect.bottom>h:
+            nave_rect.bottom=h
+        if nave_rect.top<0:
+            nave_rect.top=0
+
     pantalla.blit(fondo_t,(0,0))
     pantalla.blit(nave,nave_rect)
     pygame.display.flip()
