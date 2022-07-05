@@ -5,7 +5,7 @@ import random
 pygame.init()
 
 negro = (0,0,0)
-w,h = 600,400
+w,h = 800,600
 pantalla = pygame.display.set_mode((w,h))
 pygame.display.set_caption("Juego de naves 2D")
 fondo = pygame.image.load("./Semana15/img/fondo.jpg")
@@ -40,8 +40,7 @@ class Jugador(pygame.sprite.Sprite):
     def dispara(self):
         bala=Bala(self.rect.centerx, self.rect.y)#        
         all_sprites.add(bala)
-        bala=Bala(self.rect.x, self.rect.y)#        
-        all_sprites.add(bala)
+        lista_bala.add(bala)
 
 
 #crear balas
@@ -85,6 +84,7 @@ class Piedra(pygame.sprite.Sprite):
 
 #grupo de juego
 all_sprites = pygame.sprite.Group()
+lista_bala = pygame.sprite.Group()
 lista_meteorito = pygame.sprite.Group()
 player = Jugador()
 all_sprites.add(player)
@@ -96,7 +96,7 @@ for contador in range(5):
 
 #bucle del juego
 while True:
-    reloj.tick(50)
+    reloj.tick(70)
     for eventoCapturado in pygame.event.get():
         if eventoCapturado.type == pygame.QUIT:
             pygame.quit()
@@ -105,10 +105,18 @@ while True:
             if  eventoCapturado.key == pygame.K_SPACE:
                 player.dispara()
     
+    #choque jugador con meteorito
     hits = pygame.sprite.spritecollide(player,lista_meteorito,True)
     if hits:
         pygame.quit()
         sys.exit()
+
+    #choque bala con meteorito
+    hits = pygame.sprite.groupcollide(lista_bala,lista_meteorito,True,True)    
+    for hit in hits:
+        meteorito = Piedra()
+        all_sprites.add(meteorito)
+        lista_meteorito.add(meteorito)
 
     #visualizar en pantalla
     all_sprites.update()
