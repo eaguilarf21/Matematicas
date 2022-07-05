@@ -7,13 +7,14 @@ negro = (0,0,0)
 w,h = 600,400
 pantalla = pygame.display.set_mode((w,h))
 pygame.display.set_caption("Juego de naves 2D")
-fondo = pygame.image.load("./Semana14/img/fondo.jpg")
+fondo = pygame.image.load("./Semana15/img/fondo.jpg")
 reloj = pygame.time.Clock()
 
+#crear nave
 class Jugador(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("./Semana14/img/jugadorG.png")
+        self.image = pygame.image.load("./Semana15/img/jugadorG.png")
         self.image = pygame.transform.smoothscale(self.image,(100,100))
         self.image.set_colorkey(negro)
         self.rect = self.image.get_rect()
@@ -35,17 +36,44 @@ class Jugador(pygame.sprite.Sprite):
         if self.rect.left<0:
             self.rect.left=0
 
+    def dispara(self):
+        bala=Bala(self.rect.centerx, self.rect.y)#        
+        all_sprites.add(bala)
+        bala=Bala(self.rect.x, self.rect.y)#        
+        all_sprites.add(bala)
+
+
+#crear balas
+class Bala(pygame.sprite.Sprite):
+    def __init__(self,x,y):
+        super().__init__()
+        self.image = pygame.image.load("./Semana15/img/laser.png")
+        self.image.set_colorkey(negro)
+        self.rect = self.image.get_rect()
+        self.rect.y = y
+        self.rect.centerx = x
+
+    def update(self):
+        self.rect.y = self.rect.y-10
+        if self.rect.y<0:
+            self.kill()
+
+        
+
 all_sprites = pygame.sprite.Group()
 player = Jugador()
 all_sprites.add(player)
 
 #bucle del juego
 while True:
-    reloj.tick(1000)
+    reloj.tick(50)
     for eventoCapturado in pygame.event.get():
         if eventoCapturado.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+        if eventoCapturado.type == pygame.KEYDOWN:
+            if  eventoCapturado.key == pygame.K_SPACE:
+                player.dispara()
     
     #visualizar en pantalla
     all_sprites.update()
