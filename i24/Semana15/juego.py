@@ -1,4 +1,4 @@
-from curses import KEY_DC
+import random
 import pygame,sys
 
 pygame.init()
@@ -19,7 +19,7 @@ class Jugador(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.image.load("./Semana15/img/jugadorG.png")
         self.image = pygame.transform.smoothscale(self.image,(100,100))
-        #self.image.set_colorkey(negro)
+        self.image.set_colorkey(negro)        
         self.rect = self.image.get_rect()
         self.rect.centerx = w//2
         self.rect.bottom = h-10
@@ -42,12 +42,14 @@ class Jugador(pygame.sprite.Sprite):
     def dispara(self):
         balita = Bala(self.rect.centerx,self.rect.top)
         all_sprites.add(balita)
+        all_balas.add(balita)
 
 #objeto bala
 class Bala(pygame.sprite.Sprite):
     def __init__(self,x,y):
         super().__init__()
         self.image = pygame.image.load("./Semana15/img/laser.png")
+        self.image.set_colorkey(negro)
         self.rect = self.image.get_rect()
         self.rect.centerx = x
         self.rect.y = y
@@ -58,10 +60,41 @@ class Bala(pygame.sprite.Sprite):
         if self.rect.y<0:
             self.kill()
 
+#objeto meteorito
+class Meteorito(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.image.load("./Semana15/img/piedra.png")
+        self.image=pygame.transform.smoothscale(self.image,(60,60))
+        self.image.set_colorkey(negro)
+        self.rect = self.image.get_rect()
+        self.rect.x = random.randrange(1,w)
+        self.rect.y = -10
+        self.speed_x = random.randrange(-5,5)
+        self.speed_y = random.randrange(1,10)
+    
+    def update(self):
+        self.rect.x = self.rect.x + self.speed_x
+        self.rect.y = self.rect.y + self.speed_y
+        if self.rect.x>w or self.rect.x<0 or self.rect.y>h:
+            self.rect.x = random.randrange(1,w)
+            self.rect.y = -10
+            self.speed_x = random.randrange(-5,5)
+            self.speed_y = random.randrange(1,10)
+
+
 #coleccion principal
 all_sprites = pygame.sprite.Group()
+all_meteoritos = pygame.sprite.Group()
+all_balas = pygame.sprite.Group()
 player = Jugador()
 all_sprites.add(player)
+
+for cont in range(5 ):
+    enemigo = Meteorito()
+    all_sprites.add(enemigo)
+    all_meteoritos.add(enemigo)
+
 
 #bucle del juego
 while True:
@@ -73,7 +106,21 @@ while True:
         elif eventoCapturado.type == pygame.KEYDOWN:
             if eventoCapturado.key==pygame.K_SPACE:
                 player.dispara()
-            
+    
+    #player-meteorito
+    hits = pygame.sprite.spritecollide(player,all_meteoritos,True)
+    if hits:
+        pygame.quit()
+        sys.exit()
+    
+    #bala - meteorito
+    hits = pygame.sprite.groupcollide(all_balas,all_meteoritos,True,True)
+    for hit in hits:
+        enemigo = Meteorito()
+        all_meteoritos.add(enemigo)
+        all_sprites.add(enemigo)
+
+
 
     all_sprites.update()
     pantalla.blit(fondo,(0,0))
